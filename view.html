@@ -61,7 +61,15 @@
 <body>
   <div class="container" id="main">
     <div id="content"></div>
+    <div id="barcodeArea">
+      <svg id="barcode"></svg>
+    </div>
+    <div id="jsonOutput" style="word-break:break-all; margin-top:16px; font-size:13px; color:#555;"></div>
+    <label>编号
+      <input type="text" id="barcodeInput" placeholder="请输入条形码编号" required />
+    </label>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <script>
     function getQueryParam(name) {
       const url = window.location.search;
@@ -85,7 +93,26 @@
       document.getElementById('content').innerHTML = `<div class='error'>${msg}</div>`;
     }
     // 主逻辑
-    (function() {
+    (async function() {
+      const codeParam = getQueryParam('code');
+      if (codeParam) {
+        // 通过编号查找data.json
+        try {
+          const resp = await fetch('data.json');
+          const data = await resp.json();
+          if (data[codeParam]) {
+            renderInfo(data[codeParam]);
+            return;
+          } else {
+            showError('未找到相关商品信息。');
+            return;
+          }
+        } catch (e) {
+          showError('商品信息加载失败。');
+          return;
+        }
+      }
+      // 兼容旧data参数
       const dataParam = getQueryParam('data');
       if (!dataParam) {
         showError('未检测到二维码信息。');
@@ -101,6 +128,13 @@
       }
       renderInfo(info);
     })();
+    const barcodeValue = document.getElementById('barcodeInput').value.trim();
+    JsBarcode("#barcode", barcodeValue, {
+      format: "CODE128", // 或 "EAN13"（需13位数字）
+      width: 2,
+      height: 80,
+      displayValue: true
+    });
   </script>
 </body>
 </html> 

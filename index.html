@@ -34,15 +34,20 @@
       <label>商标
         <input type="text" id="specInput" placeholder="请输入商标" required />
       </label>
-      <button type="submit" id="generateBtn">生成二维码</button>
-      <div class="info">图片将自动上传到imgbb，二维码内容为JSON字符串。</div>
+      <label>编号
+        <input type="text" id="barcodeInput" placeholder="请输入条形码编号" required />
+      </label>
+      <button type="submit" id="generateBtn">生成条形码</button>
+      <div class="info">图片将自动上传到imgbb，条形码内容为JSON字符串。</div>
     </form>
-    <div id="qrcode"></div>
+    <div id="barcodeArea">
+      <svg id="barcode"></svg>
+    </div>
     <div id="jsonOutput" style="word-break:break-all; margin-top:16px; font-size:13px; color:#555;"></div>
   </div>
 
   <!-- qrcode.js库 -->
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <script>
     const form = document.getElementById('infoForm');
     const imageInput = document.getElementById('imageInput');
@@ -50,7 +55,6 @@
     const supplierInput = document.getElementById('supplierInput');
     const specInput = document.getElementById('specInput');
     const generateBtn = document.getElementById('generateBtn');
-    const qrcodeDiv = document.getElementById('qrcode');
     const jsonOutput = document.getElementById('jsonOutput');
     const imgPreview = document.getElementById('imgPreview');
 
@@ -96,51 +100,32 @@
       }
     }
 
-    // 生成二维码
+    // 生成条形码
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
       generateBtn.disabled = true;
-      generateBtn.textContent = '正在上传图片...';
-      qrcodeDiv.innerHTML = '';
+      generateBtn.textContent = '正在生成条形码...';
+      document.getElementById('barcodeArea').innerHTML = '<svg id="barcode"></svg>';
       jsonOutput.textContent = '';
-      // 1. 上传图片
-      const file = imageInput.files[0];
-      if (!file) {
-        alert('请先选择图片');
+      // 1. 获取编号
+      const barcodeValue = document.getElementById('barcodeInput').value.trim();
+      if (!barcodeValue) {
+        alert('请输入条形码编号');
         generateBtn.disabled = false;
-        generateBtn.textContent = '生成二维码';
+        generateBtn.textContent = '生成条形码';
         return;
       }
-      try {
-        const imageUrl = await uploadImage(file);
-        uploadedImageUrl = imageUrl;
-      } catch (err) {
-        alert('图片上传失败：' + err.message);
-        generateBtn.disabled = false;
-        generateBtn.textContent = '生成二维码';
-        return;
-      }
-      // 2. 组装JSON
-      const info = {
-        image: uploadedImageUrl,
-        brand: brandInput.value.trim(),
-        supplier: supplierInput.value.trim(),
-        spec: specInput.value.trim()
-      };
-      const jsonStr = JSON.stringify(info);
-      // 3. 生成二维码内容为完整的GitHub Pages公网URL
-      const qrUrl = `https://laynehl.github.io/qr/view.html?data=${encodeURIComponent(jsonStr)}`;
-      generateBtn.textContent = '正在生成二维码...';
-      qrcodeDiv.innerHTML = '';
-      new QRCode(qrcodeDiv, {
-        text: qrUrl,
-        width: 300,
-        height: 300,
-        correctLevel: QRCode.CorrectLevel.L
+      // 2. 生成条形码内容为编号跳转链接
+      const codeUrl = `https://laynehl.github.io/qr/view.html?code=${encodeURIComponent(barcodeValue)}`;
+      JsBarcode("#barcode", barcodeValue, {
+        format: "CODE128",
+        width: 2,
+        height: 80,
+        displayValue: true
       });
-      jsonOutput.textContent = qrUrl;
+      jsonOutput.textContent = codeUrl;
       generateBtn.disabled = false;
-      generateBtn.textContent = '生成二维码';
+      generateBtn.textContent = '生成条形码';
     });
   </script>
 </body>
