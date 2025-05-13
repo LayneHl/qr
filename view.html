@@ -15,8 +15,9 @@
     .error { color: #c00; text-align: center; margin-top: 40px; font-size: 18px; }
     .info-list {
       display: flex;
-      flex-direction: column;
-      gap: 18px;
+      flex-direction: row;
+      justify-content: space-between;
+      gap: 16px;
       padding: 0;
       background: none;
       box-shadow: none;
@@ -75,9 +76,9 @@
         html += `<div class='img-box'><img src='${info.image}' alt='图片' /></div>`;
       }
       html += `<div class='info-list'>
-        <div class='info-block'><span class='info-label'>商品：</span><span class='info-value'>${info.brand || '-'}</span></div>
-        <div class='info-block'><span class='info-label'>生产商：</span><span class='info-value'>${info.supplier || '-'}</span></div>
-        <div class='info-block'><span class='info-label'>商标：</span><span class='info-value'>${info.spec || '-'}</span></div>
+        <div class='info-block'><span class='info-label'>品牌：</span><span class='info-value'>${info.brand || '-'}</span></div>
+        <div class='info-block'><span class='info-label'>供应商：</span><span class='info-value'>${info.supplier || '-'}</span></div>
+        <div class='info-block'><span class='info-label'>规格：</span><span class='info-value'>${info.spec || '-'}</span></div>
       </div>`;
       content.innerHTML = html;
     }
