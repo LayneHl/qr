@@ -115,14 +115,34 @@
         generateBtn.textContent = '生成条形码';
         return;
       }
-      // 2. 生成条形码
-      JsBarcode("#barcode", barcodeValue, {
+      // 2. 组装展示页长链接
+      const info = {
+        brand: brandInput.value.trim(),
+        supplier: supplierInput.value.trim(),
+        spec: specInput.value.trim(),
+        image: uploadedImageUrl || ''
+      };
+      const jsonStr = JSON.stringify(info);
+      const longUrl = `https://laynehl.github.io/qr/view.html?data=${encodeURIComponent(jsonStr)}`;
+      // 3. 请求suo.yt短链API
+      let shortUrl = '';
+      try {
+        const resp = await fetch(`https://suo.yt/api.php?url=${encodeURIComponent(longUrl)}`);
+        shortUrl = await resp.text();
+      } catch (err) {
+        alert('短链生成失败，请重试');
+        generateBtn.disabled = false;
+        generateBtn.textContent = '生成条形码';
+        return;
+      }
+      // 4. 用短链生成条形码
+      JsBarcode("#barcode", shortUrl, {
         format: "CODE128",
         width: 2,
         height: 80,
         displayValue: true
       });
-      jsonOutput.textContent = barcodeValue;
+      jsonOutput.textContent = shortUrl;
       generateBtn.disabled = false;
       generateBtn.textContent = '生成条形码';
     });
