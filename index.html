@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>生成带图片信息的二维码</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; background: #f7f7f7; padding: 30px; }
+    .container { background: #fff; max-width: 400px; margin: 0 auto; padding: 24px 32px 32px 32px; border-radius: 12px; box-shadow: 0 2px 12px #0001; }
+    h2 { text-align: center; }
+    label { display: block; margin-top: 18px; font-weight: bold; }
+    input[type="text"], input[type="file"] { width: 100%; margin-top: 6px; padding: 8px; border-radius: 4px; border: 1px solid #ccc; }
+    button { margin-top: 24px; width: 100%; padding: 12px; background: #0078e7; color: #fff; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; }
+    button:disabled { background: #aaa; }
+    #qrcode { margin: 24px auto 0 auto; display: flex; justify-content: center; }
+    .info { color: #888; font-size: 13px; margin-top: 8px; }
+    .preview-img { margin-top: 10px; max-width: 100%; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>生成带图片信息的二维码</h2>
+    <form id="infoForm" autocomplete="off">
+      <label>上传图片
+        <input type="file" id="imageInput" accept="image/*" required />
+      </label>
+      <div id="imgPreview"></div>
+      <label>商品
+        <input type="text" id="brandInput" placeholder="请输入商品" required />
+      </label>
+      <label>生产商
+        <input type="text" id="supplierInput" placeholder="请输入生厂商" required />
+      </label>
+      <label>商标
+        <input type="text" id="specInput" placeholder="请输入商标" required />
+      </label>
+      <button type="submit" id="generateBtn">生成二维码</button>
+      <div class="info">图片将自动上传到imgbb，二维码内容为JSON字符串。</div>
+    </form>
+    <div id="qrcode"></div>
+    <div id="jsonOutput" style="word-break:break-all; margin-top:16px; font-size:13px; color:#555;"></div>
+  </div>
+
+  <!-- qrcode.js库 -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script>
+    const form = document.getElementById('infoForm');
+    const imageInput = document.getElementById('imageInput');
+    const brandInput = document.getElementById('brandInput');
+    const supplierInput = document.getElementById('supplierInput');
+    const specInput = document.getElementById('specInput');
+    const generateBtn = document.getElementById('generateBtn');
+    const qrcodeDiv = document.getElementById('qrcode');
+    const jsonOutput = document.getElementById('jsonOutput');
+    const imgPreview = document.getElementById('imgPreview');
+
+    let uploadedImageUrl = '';
+
+    // 图片预览
+    imageInput.addEventListener('change', function() {
+      imgPreview.innerHTML = '';
+      const file = imageInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          imgPreview.innerHTML = `<img src="${e.target.result}" class="preview-img" alt="预览" />`;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // 上传图片到imgbb
+    async function uploadImage(file) {
+      // 1. 读取文件为base64
+      const toBase64 = file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(",")[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      const base64 = await toBase64(file);
+      // 2. 上传到imgbb
+      const apiKey = 'e025ebaf2fe54ef2fc4cda2c29dce1a4';
+      const formData = new FormData();
+      formData.append('key', apiKey);
+      formData.append('image', base64);
+      const resp = await fetch('https://api.imgbb.com/1/upload', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await resp.json();
+      if (data.success) {
+        return data.data.url;
+      } else {
+        throw new Error(data.error?.message || '图片上传失败');
+      }
+    }
+
+    // 生成二维码
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      generateBtn.disabled = true;
+      generateBtn.textContent = '正在上传图片...';
+      qrcodeDiv.innerHTML = '';
+      jsonOutput.textContent = '';
+      // 1. 上传图片
+      const file = imageInput.files[0];
+      if (!file) {
+        alert('请先选择图片');
+        generateBtn.disabled = false;
+        generateBtn.textContent = '生成二维码';
+        return;
+      }
+      try {
+        const imageUrl = await uploadImage(file);
+        uploadedImageUrl = imageUrl;
+      } catch (err) {
+        alert('图片上传失败：' + err.message);
+        generateBtn.disabled = false;
+        generateBtn.textContent = '生成二维码';
+        return;
+      }
+      // 2. 组装JSON
+      const info = {
+        image: uploadedImageUrl,
+        brand: brandInput.value.trim(),
+        supplier: supplierInput.value.trim(),
+        spec: specInput.value.trim()
+      };
+      const jsonStr = JSON.stringify(info);
+      // 3. 生成二维码内容为完整的GitHub Pages公网URL
+      const qrUrl = `https://laynehl.github.io/qr/view.html?data=${encodeURIComponent(jsonStr)}`;
+      generateBtn.textContent = '正在生成二维码...';
+      qrcodeDiv.innerHTML = '';
+      new QRCode(qrcodeDiv, {
+        text: qrUrl,
+        width: 300,
+        height: 300,
+        correctLevel: QRCode.CorrectLevel.L
+      });
+      jsonOutput.textContent = qrUrl;
+      generateBtn.disabled = false;
+      generateBtn.textContent = '生成二维码';
+    });
+  </script>
+</body>
+</html> 
