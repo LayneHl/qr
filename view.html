@@ -71,6 +71,15 @@
   </div>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <script>
+    // 内嵌商品数据
+    window.DATA_JSON = {
+      "AA234456789UU": {
+        "brand": "防晒衣",
+        "supplier": "石狮市信展服饰有限公司",
+        "spec": "信展",
+        "image": "https://Laynehl.github.io/qr/new_image.jpg"
+      }
+    };
     function getQueryParam(name) {
       const url = window.location.search;
       const params = new URLSearchParams(url);
@@ -96,19 +105,13 @@
     (async function() {
       const codeParam = getQueryParam('code');
       if (codeParam) {
-        // 通过编号查找data.json
-        try {
-          const resp = await fetch('data.json');
-          const data = await resp.json();
-          if (data[codeParam]) {
-            renderInfo(data[codeParam]);
-            return;
-          } else {
-            showError('未找到相关商品信息。');
-            return;
-          }
-        } catch (e) {
-          showError('商品信息加载失败。');
+        // 直接用内嵌数据查找
+        const data = window.DATA_JSON;
+        if (data[codeParam]) {
+          renderInfo(data[codeParam]);
+          return;
+        } else {
+          showError('未找到相关商品信息。');
           return;
         }
       }
