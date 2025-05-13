@@ -115,12 +115,13 @@
         generateBtn.textContent = '生成条形码';
         return;
       }
-      // 2. 组装展示页长链接
+      // 2. 组装展示页长链接，包含编号
       const info = {
         brand: brandInput.value.trim(),
         supplier: supplierInput.value.trim(),
         spec: specInput.value.trim(),
-        image: uploadedImageUrl || ''
+        image: uploadedImageUrl || '',
+        code: barcodeValue
       };
       const jsonStr = JSON.stringify(info);
       const longUrl = `https://laynehl.github.io/qr/view.html?data=${encodeURIComponent(jsonStr)}`;
