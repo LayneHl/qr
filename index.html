@@ -124,25 +124,14 @@
       };
       const jsonStr = JSON.stringify(info);
       const longUrl = `https://laynehl.github.io/qr/view.html?data=${encodeURIComponent(jsonStr)}`;
-      // 3. 请求suo.yt短链API
-      let shortUrl = '';
-      try {
-        const resp = await fetch(`https://suo.yt/api.php?url=${encodeURIComponent(longUrl)}`);
-        shortUrl = await resp.text();
-      } catch (err) {
-        alert('短链生成失败，请重试');
-        generateBtn.disabled = false;
-        generateBtn.textContent = '生成条形码';
-        return;
-      }
-      // 4. 用短链生成条形码
-      JsBarcode("#barcode", shortUrl, {
+      // 3. 用长链接生成条形码
+      JsBarcode("#barcode", longUrl, {
         format: "CODE128",
         width: 2,
         height: 80,
         displayValue: true
       });
-      jsonOutput.textContent = shortUrl;
+      jsonOutput.textContent = longUrl;
       generateBtn.disabled = false;
       generateBtn.textContent = '生成条形码';
     });
