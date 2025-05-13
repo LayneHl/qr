@@ -34,6 +34,9 @@
       <label>商标
         <input type="text" id="specInput" placeholder="请输入商标" required />
       </label>
+      <label>编号
+        <input type="text" id="barcodeInput" placeholder="请输入条形码编号" required />
+      </label>
       <button type="submit" id="generateBtn">生成条形码</button>
       <div class="info">图片将自动上传到imgbb，条形码内容为JSON字符串。</div>
     </form>
@@ -101,44 +104,25 @@
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
       generateBtn.disabled = true;
-      generateBtn.textContent = '正在上传图片...';
+      generateBtn.textContent = '正在生成条形码...';
       document.getElementById('barcodeArea').innerHTML = '<svg id="barcode"></svg>';
       jsonOutput.textContent = '';
-      // 1. 上传图片
-      const file = imageInput.files[0];
-      if (!file) {
-        alert('请先选择图片');
+      // 1. 获取编号
+      const barcodeValue = document.getElementById('barcodeInput').value.trim();
+      if (!barcodeValue) {
+        alert('请输入条形码编号');
         generateBtn.disabled = false;
         generateBtn.textContent = '生成条形码';
         return;
       }
-      try {
-        const imageUrl = await uploadImage(file);
-        uploadedImageUrl = imageUrl;
-      } catch (err) {
-        alert('图片上传失败：' + err.message);
-        generateBtn.disabled = false;
-        generateBtn.textContent = '生成条形码';
-        return;
-      }
-      // 2. 组装JSON
-      const info = {
-        image: uploadedImageUrl,
-        brand: brandInput.value.trim(),
-        supplier: supplierInput.value.trim(),
-        spec: specInput.value.trim()
-      };
-      const jsonStr = JSON.stringify(info);
-      // 3. 生成条形码内容为完整的GitHub Pages公网URL
-      const qrUrl = `https://laynehl.github.io/qr/view.html?data=${encodeURIComponent(jsonStr)}`;
-      generateBtn.textContent = '正在生成条形码...';
-      JsBarcode("#barcode", qrUrl, {
+      // 2. 生成条形码
+      JsBarcode("#barcode", barcodeValue, {
         format: "CODE128",
         width: 2,
         height: 80,
         displayValue: true
       });
-      jsonOutput.textContent = qrUrl;
+      jsonOutput.textContent = barcodeValue;
       generateBtn.disabled = false;
       generateBtn.textContent = '生成条形码';
     });
