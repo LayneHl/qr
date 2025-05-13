@@ -13,23 +13,37 @@
     .img-box { text-align: center; margin-bottom: 32px; }
     .img-box img { max-width: 100%; max-height: 260px; border-radius: 14px; box-shadow: 0 2px 12px #0001; }
     .error { color: #c00; text-align: center; margin-top: 40px; font-size: 18px; }
-    .info-list { padding: 0; background: none; box-shadow: none; margin-top: 0; }
+    .info-list {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0;
+      background: none;
+      box-shadow: none;
+      margin-top: 0;
+    }
     .info-block {
       background: #f7f8fa;
       border-radius: 14px;
-      padding: 18px 20px 14px 20px;
-      margin-bottom: 22px;
+      padding: 14px 10px 10px 10px;
+      flex: 1 1 0;
+      min-width: 0;
       box-sizing: border-box;
+      margin-bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
     }
     .info-label {
       color: #888;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: bold;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       display: block;
     }
     .info-value {
-      font-size: 22px;
+      font-size: 18px;
       font-weight: 400;
       color: #222;
       word-break: break-all;
@@ -38,8 +52,10 @@
     }
     @media (max-width: 600px) {
       .container { padding: 18px 4vw 18px 4vw; margin: 10px auto; }
-      .img-box img { max-height: 180px; }
-      .info-value { font-size: 18px; }
+      .img-box img { max-height: 220px; }
+      .info-list { gap: 8px; }
+      .info-label { font-size: 13px; }
+      .info-value { font-size: 15px; }
     }
   </style>
 </head>
