@@ -128,8 +128,8 @@
         spec: specInput.value.trim()
       };
       const jsonStr = JSON.stringify(info);
-      // 3. 生成二维码内容为view.html?data=xxxx
-      const qrUrl = `view.html?data=${encodeURIComponent(jsonStr)}`;
+      // 3. 生成二维码内容为完整的GitHub Pages公网URL
+      const qrUrl = `https://laynehl.github.io/qr/view.html?data=${encodeURIComponent(jsonStr)}`;
       generateBtn.textContent = '正在生成二维码...';
       qrcodeDiv.innerHTML = '';
       new QRCode(qrcodeDiv, {
