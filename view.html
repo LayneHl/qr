@@ -93,7 +93,26 @@
       document.getElementById('content').innerHTML = `<div class='error'>${msg}</div>`;
     }
     // 主逻辑
-    (function() {
+    (async function() {
+      const codeParam = getQueryParam('code');
+      if (codeParam) {
+        // 通过编号查找data.json
+        try {
+          const resp = await fetch('data.json');
+          const data = await resp.json();
+          if (data[codeParam]) {
+            renderInfo(data[codeParam]);
+            return;
+          } else {
+            showError('未找到相关商品信息。');
+            return;
+          }
+        } catch (e) {
+          showError('商品信息加载失败。');
+          return;
+        }
+      }
+      // 兼容旧data参数
       const dataParam = getQueryParam('data');
       if (!dataParam) {
         showError('未检测到二维码信息。');

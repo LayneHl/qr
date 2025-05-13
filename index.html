@@ -115,24 +115,15 @@
         generateBtn.textContent = '生成条形码';
         return;
       }
-      // 2. 组装展示页长链接，包含编号
-      const info = {
-        brand: brandInput.value.trim(),
-        supplier: supplierInput.value.trim(),
-        spec: specInput.value.trim(),
-        image: uploadedImageUrl || '',
-        code: barcodeValue
-      };
-      const jsonStr = JSON.stringify(info);
-      const longUrl = `https://laynehl.github.io/qr/view.html?data=${encodeURIComponent(jsonStr)}`;
-      // 3. 用长链接生成条形码
-      JsBarcode("#barcode", longUrl, {
+      // 2. 生成条形码内容为编号跳转链接
+      const codeUrl = `https://laynehl.github.io/qr/view.html?code=${encodeURIComponent(barcodeValue)}`;
+      JsBarcode("#barcode", barcodeValue, {
         format: "CODE128",
         width: 2,
         height: 80,
         displayValue: true
       });
-      jsonOutput.textContent = longUrl;
+      jsonOutput.textContent = codeUrl;
       generateBtn.disabled = false;
       generateBtn.textContent = '生成条形码';
     });
