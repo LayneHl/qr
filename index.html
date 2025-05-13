@@ -25,14 +25,14 @@
         <input type="file" id="imageInput" accept="image/*" required />
       </label>
       <div id="imgPreview"></div>
-      <label>品牌
-        <input type="text" id="brandInput" placeholder="请输入品牌" required />
+      <label>商品
+        <input type="text" id="brandInput" placeholder="请输入商品" required />
       </label>
-      <label>供应商
-        <input type="text" id="supplierInput" placeholder="请输入供应商" required />
+      <label>生产商
+        <input type="text" id="supplierInput" placeholder="请输入生厂商" required />
       </label>
-      <label>规格
-        <input type="text" id="specInput" placeholder="请输入规格" required />
+      <label>商标
+        <input type="text" id="specInput" placeholder="请输入商标" required />
       </label>
       <button type="submit" id="generateBtn">生成二维码</button>
       <div class="info">图片将自动上传到imgbb，二维码内容为JSON字符串。</div>
@@ -134,8 +134,9 @@
       qrcodeDiv.innerHTML = '';
       new QRCode(qrcodeDiv, {
         text: qrUrl,
-        width: 220,
-        height: 220
+        width: 300,
+        height: 300,
+        correctLevel: QRCode.CorrectLevel.L
       });
       jsonOutput.textContent = qrUrl;
       generateBtn.disabled = false;

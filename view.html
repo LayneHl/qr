@@ -2,23 +2,49 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>扫码信息展示</title>
+  <title></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: Arial, sans-serif; background: #f7f7f7; padding: 30px; }
-    .container { background: #fff; max-width: 400px; margin: 0 auto; padding: 32px 24px 32px 24px; border-radius: 12px; box-shadow: 0 2px 12px #0001; }
-    h2 { text-align: center; margin-bottom: 24px; }
-    .info-item { margin-bottom: 18px; }
-    .info-label { color: #888; font-size: 14px; }
-    .info-value { font-size: 17px; font-weight: bold; color: #222; }
-    .img-box { text-align: center; margin-bottom: 24px; }
-    .img-box img { max-width: 100%; border-radius: 8px; box-shadow: 0 2px 8px #0002; }
+    body { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif; background: #f7f7f7; padding: 0; margin: 0; }
+    .container { background: #fff; max-width: 500px; width: 95vw; margin: 32px auto; padding: 32px 18px 28px 18px; border-radius: 18px; box-shadow: 0 4px 24px #0002; }
+    .info-item { margin-bottom: 28px; }
+    .info-label { display: block; color: #888; font-size: 15px; margin-bottom: 4px; letter-spacing: 1px; }
+    .info-value { font-size: 22px; font-weight: 500; color: #222; word-break: break-all; }
+    .img-box { text-align: center; margin-bottom: 32px; }
+    .img-box img { max-width: 100%; max-height: 260px; border-radius: 14px; box-shadow: 0 2px 12px #0001; }
     .error { color: #c00; text-align: center; margin-top: 40px; font-size: 18px; }
+    .info-list { padding: 0; background: none; box-shadow: none; margin-top: 0; }
+    .info-block {
+      background: #f7f8fa;
+      border-radius: 14px;
+      padding: 18px 20px 14px 20px;
+      margin-bottom: 22px;
+      box-sizing: border-box;
+    }
+    .info-label {
+      color: #888;
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .info-value {
+      font-size: 22px;
+      font-weight: 400;
+      color: #222;
+      word-break: break-all;
+      margin-top: 2px;
+      display: block;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 18px 4vw 18px 4vw; margin: 10px auto; }
+      .img-box img { max-height: 180px; }
+      .info-value { font-size: 18px; }
+    }
   </style>
 </head>
 <body>
   <div class="container" id="main">
-    <h2>扫码信息展示</h2>
     <div id="content"></div>
   </div>
   <script>
@@ -33,9 +59,11 @@
       if (info.image) {
         html += `<div class='img-box'><img src='${info.image}' alt='图片' /></div>`;
       }
-      html += `<div class='info-item'><span class='info-label'>品牌：</span><span class='info-value'>${info.brand || '-'}</span></div>`;
-      html += `<div class='info-item'><span class='info-label'>供应商：</span><span class='info-value'>${info.supplier || '-'}</span></div>`;
-      html += `<div class='info-item'><span class='info-label'>规格：</span><span class='info-value'>${info.spec || '-'}</span></div>`;
+      html += `<div class='info-list'>
+        <div class='info-block'><span class='info-label'>品牌：</span><span class='info-value'>${info.brand || '-'}</span></div>
+        <div class='info-block'><span class='info-label'>供应商：</span><span class='info-value'>${info.supplier || '-'}</span></div>
+        <div class='info-block'><span class='info-label'>规格：</span><span class='info-value'>${info.spec || '-'}</span></div>
+      </div>`;
       content.innerHTML = html;
     }
     function showError(msg) {
