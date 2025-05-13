@@ -61,7 +61,12 @@
 <body>
   <div class="container" id="main">
     <div id="content"></div>
+    <div id="barcodeArea">
+      <svg id="barcode"></svg>
+    </div>
+    <div id="jsonOutput" style="word-break:break-all; margin-top:16px; font-size:13px; color:#555;"></div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <script>
     function getQueryParam(name) {
       const url = window.location.search;
