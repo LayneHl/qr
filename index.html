@@ -41,13 +41,13 @@
       <div class="info">图片将自动上传到imgbb，条形码内容为JSON字符串。</div>
     </form>
     <div id="barcodeArea">
-      <svg id="barcode"></svg>
+      <div id="qrcode"></div>
     </div>
     <div id="jsonOutput" style="word-break:break-all; margin-top:16px; font-size:13px; color:#555;"></div>
   </div>
 
   <!-- qrcode.js库 -->
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <script>
     const form = document.getElementById('infoForm');
     const imageInput = document.getElementById('imageInput');
@@ -106,14 +106,14 @@
       e.preventDefault();
       generateBtn.disabled = true;
       generateBtn.textContent = '正在上传图片...';
-      document.getElementById('barcodeArea').innerHTML = '<svg id="barcode"></svg>';
+      document.getElementById('barcodeArea').innerHTML = '<div id="qrcode"></div>';
       jsonOutput.textContent = '';
       // 1. 上传图片
       const file = imageInput.files[0];
       if (!file) {
         alert('请先选择图片');
         generateBtn.disabled = false;
-        generateBtn.textContent = '生成条形码';
+        generateBtn.textContent = '生成二维码';
         return;
       }
       try {
@@ -122,7 +122,7 @@
       } catch (err) {
         alert('图片上传失败：' + err.message);
         generateBtn.disabled = false;
-        generateBtn.textContent = '生成条形码';
+        generateBtn.textContent = '生成二维码';
         return;
       }
       // 2. 组装JSON
@@ -134,18 +134,20 @@
         price: priceInput.value.trim()
       };
       const jsonStr = JSON.stringify(info);
-      // 3. 生成条形码内容为完整的GitHub Pages公网URL
+      // 3. 生成二维码内容为完整的GitHub Pages公网URL
       const qrUrl = `https://laynehl.github.io/qr/view.html?data=${encodeURIComponent(jsonStr)}`;
-      generateBtn.textContent = '正在生成条形码...';
-      JsBarcode("#barcode", qrUrl, {
-        format: "CODE128",
-        width: 2,
-        height: 80,
-        displayValue: true
+      generateBtn.textContent = '正在生成二维码...';
+      new QRCode(document.getElementById('qrcode'), {
+        text: qrUrl,
+        width: 220,
+        height: 220,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
       });
       jsonOutput.textContent = qrUrl;
       generateBtn.disabled = false;
-      generateBtn.textContent = '生成条形码';
+      generateBtn.textContent = '生成二维码';
     });
   </script>
 </body>
