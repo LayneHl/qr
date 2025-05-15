@@ -34,6 +34,9 @@
       <label>商标
         <input type="text" id="specInput" placeholder="请输入商标" required />
       </label>
+      <label>零售价
+        <input type="text" id="priceInput" placeholder="请输入零售价" required />
+      </label>
       <button type="submit" id="generateBtn">生成条形码</button>
       <div class="info">图片将自动上传到imgbb，条形码内容为JSON字符串。</div>
     </form>
@@ -54,6 +57,7 @@
     const generateBtn = document.getElementById('generateBtn');
     const jsonOutput = document.getElementById('jsonOutput');
     const imgPreview = document.getElementById('imgPreview');
+    const priceInput = document.getElementById('priceInput');
 
     let uploadedImageUrl = '';
 
@@ -126,7 +130,8 @@
         image: uploadedImageUrl,
         brand: brandInput.value.trim(),
         supplier: supplierInput.value.trim(),
-        spec: specInput.value.trim()
+        spec: specInput.value.trim(),
+        price: priceInput.value.trim()
       };
       const jsonStr = JSON.stringify(info);
       // 3. 生成条形码内容为完整的GitHub Pages公网URL
